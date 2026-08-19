@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Smart Emergency</title>
+    
+    <!-- PWA sozlamalari -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#dc2626">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Leaflet JS & CSS -->
@@ -40,5 +47,16 @@
     <script src="history.js"></script>
     <script src="components.js"></script>
     <script src="app.js"></script>
+
+    <!-- Service Worker ni ishga tushirish -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(() => console.log('Service Worker faol'))
+                    .catch(err => console.log('SW xatolik:', err));
+            });
+        }
+    </script>
 </body>
 </html>
