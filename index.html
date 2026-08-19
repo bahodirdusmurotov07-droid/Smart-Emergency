@@ -7,12 +7,18 @@
     
     <!-- PWA sozlamalari -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#020617">
+    <meta name="theme-color" content="#0f172a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
+    <!-- Zamonaviy Google Shrifti -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <!-- Leaflet JS & CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -22,33 +28,61 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
         
         html, body {
             width: 100%;
             height: 100%;
-            height: 100dvh; /* Dinamik mobil ekran balandligi */
+            height: 100dvh;
             overflow: hidden;
-            background-color: #020617;
+            background-color: #0b0f19;
         }
         
         #app {
             width: 100%;
             height: 100%;
             height: 100dvh;
-            max-width: 480px; /* Planshet va kompyuterda ham telefon shaklida markazda turishi uchun */
+            max-width: 480px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
             position: relative;
-            background-color: #ffffff;
+            background-color: #f8fafc;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
+
+        /* Skrollbarni yashirish (toza ilova ko'rinishi uchun) */
+        #app::-webkit-scrollbar {
+            display: none;
+        }
+        #app {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .pulse-red {
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            animation: pulse-ring 2s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(0.97); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); }
+            70% { transform: scale(1); box-shadow: 0 0 0 14px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.97); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
     </style>
 </head>
-<body class="flex justify-center items-center select-none font-sans bg-slate-950">
+<body class="flex justify-center items-center select-none bg-slate-950">
 
     <div id="app"></div>
 
