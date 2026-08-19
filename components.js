@@ -1,14 +1,27 @@
 const UI = {
-    // 1. Asosiy SOS Dashboard (Ultra Zamonaviy MedTech Dizayn)
+    // Laboratoriya tahlilini xavfsiz o'qib olish yordamchi funksiyasi
+    getLabData: () => {
+        const raw = localStorage.getItem('se_latest_lab_result');
+        if (raw) {
+            try { return JSON.parse(raw); } catch (e) {}
+        }
+        return {
+            testType: "Koagulyatsiya (D-Dimer)",
+            risk: "🔴 Yuqori xavf (Kritik)",
+            note: "Insult takrorlanish xavfi mavjud, qon quyulgan.",
+            date: "Bugun"
+        };
+    },
+
+    // 1. Asosiy SOS Dashboard
     renderHome: () => {
-        const labRaw = localStorage.getItem('se_lab_31201991234567');
-        const lab = labRaw ? JSON.parse(labRaw) : { testType: "Koagulyatsiya", risk: "🔴 Yuqori xavf" };
+        const lab = UI.getLabData();
 
         return `
             <div class="flex flex-col justify-between h-full w-full p-4 bg-slate-900 text-slate-100 overflow-y-auto">
                 
-                <!-- Yuqori qism: Header & Profil -->
                 <div>
+                    <!-- Header -->
                     <div class="flex justify-between items-center pb-3 pt-1 border-b border-slate-800">
                         <div class="flex items-center space-x-3">
                             <div class="w-11 h-11 bg-gradient-to-tr from-red-600 to-rose-500 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-lg shadow-red-600/30">
@@ -23,22 +36,22 @@ const UI = {
                             </div>
                         </div>
 
-                        <button onclick="App.showScreen('profile')" class="bg-slate-800/90 border border-slate-700/80 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-200 active:scale-95 transition-all flex items-center gap-1.5 shadow-sm">
+                        <button onclick="App.showScreen('profile')" class="bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-200 active:scale-95 transition-all flex items-center gap-1.5 shadow-sm">
                             <span class="w-2 h-2 rounded-full bg-red-500"></span>
                             <span>Karta</span>
                         </button>
                     </div>
 
-                    <!-- Tezkor Tibbiy Holat Vidjeti (Bo'shliqni to'ldiruvchi) -->
-                    <div class="mt-3.5 bg-gradient-to-r from-slate-800/90 to-slate-850 p-3.5 rounded-3xl border border-slate-700/70 shadow-lg space-y-2">
+                    <!-- Jonli Laboratoriya Holati Vidjeti -->
+                    <div class="mt-3.5 bg-gradient-to-r from-slate-800 to-slate-850 p-3.5 rounded-3xl border border-slate-700 shadow-lg space-y-2">
                         <div class="flex justify-between items-center text-xs">
                             <span class="text-slate-400 font-semibold flex items-center gap-1">
                                 <span>📍</span> Toshkent, Amir Temur xiyoboni
                             </span>
-                            <span class="text-red-400 font-black text-[10px] bg-red-950/80 px-2 py-0.5 rounded-md border border-red-800/50">3-SHKALA (KRITIK)</span>
+                            <span class="text-red-400 font-black text-[10px] bg-red-950 px-2 py-0.5 rounded-md border border-red-800">3-SHKALA (KRITIK)</span>
                         </div>
-                        <div class="flex justify-between items-center pt-1 border-t border-slate-750 text-[11px]">
-                            <span class="text-slate-300">Oxirgi lab nazorati: <b>${lab.testType}</b></span>
+                        <div class="flex justify-between items-center pt-1 border-t border-slate-700/60 text-[11px]">
+                            <span class="text-slate-300">Oxirgi lab: <b>${lab.testType}</b></span>
                             <span class="text-amber-400 font-bold">${lab.risk}</span>
                         </div>
                     </div>
@@ -47,7 +60,6 @@ const UI = {
                 <!-- SOS Asosiy Chaqiruv Tugmalari -->
                 <div class="space-y-3 my-auto py-2">
                     
-                    <!-- O'zimga Yordam (Markaziy Asosiy Karta) -->
                     <button onclick="App.initiateCall('my_card', 'home')" class="w-full p-4.5 bg-gradient-to-r from-red-600 via-rose-600 to-red-500 active:scale-[0.98] text-white rounded-3xl flex items-center justify-between shadow-xl shadow-red-600/30 border border-red-400/40 transition-all">
                         <div class="flex items-center space-x-3.5 text-left">
                             <div class="w-13 h-13 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl shrink-0 shadow-inner p-2">
@@ -58,7 +70,7 @@ const UI = {
                                     <span class="text-lg font-black tracking-tight block">O'zimga Yordam</span>
                                     <span class="bg-white/25 text-white text-[9px] font-black uppercase px-2 py-0.5 rounded-full">Kritik</span>
                                 </div>
-                                <span class="text-[11px] text-red-100 font-medium block mt-0.5">Shaxsiy insult tarixi va GPS to'liq uzatiladi</span>
+                                <span class="text-[11px] text-red-100 font-medium block mt-0.5">Shaxsiy insult tarixi va GPS uzatiladi</span>
                             </div>
                         </div>
                         <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center font-bold text-sm shrink-0">
@@ -66,8 +78,7 @@ const UI = {
                         </div>
                     </button>
 
-                    <!-- Oilamga Yordam -->
-                    <button onclick="App.showScreen('family')" class="w-full p-4 bg-slate-800 active:scale-[0.98] rounded-3xl flex items-center justify-between shadow-md border border-slate-700/80 hover:border-amber-500/50 transition-all">
+                    <button onclick="App.showScreen('family')" class="w-full p-4 bg-slate-800 active:scale-[0.98] rounded-3xl flex items-center justify-between shadow-md border border-slate-700 hover:border-amber-500/50 transition-all">
                         <div class="flex items-center space-x-3.5 text-left">
                             <div class="w-12 h-12 bg-amber-500/20 rounded-2xl flex items-center justify-center text-2xl shrink-0 border border-amber-500/30 p-2">
                                 👨‍👩‍👧‍👦
@@ -82,15 +93,14 @@ const UI = {
                         </div>
                     </button>
 
-                    <!-- Begonaga Yordam -->
-                    <button onclick="App.showScreen('stranger')" class="w-full p-4 bg-slate-800 active:scale-[0.98] rounded-3xl flex items-center justify-between shadow-md border border-slate-700/80 hover:border-blue-500/50 transition-all">
+                    <button onclick="App.showScreen('stranger')" class="w-full p-4 bg-slate-800 active:scale-[0.98] rounded-3xl flex items-center justify-between shadow-md border border-slate-700 hover:border-blue-500/50 transition-all">
                         <div class="flex items-center space-x-3.5 text-left">
                             <div class="w-12 h-12 bg-blue-500/20 rounded-2xl flex items-center justify-center text-2xl shrink-0 border border-blue-500/30 p-2">
                                 👤
                             </div>
                             <div>
                                 <span class="text-base font-extrabold text-white tracking-tight block">Begonaga Yordam</span>
-                                <span class="text-[11px] text-slate-400 font-medium">Tezkor vizual holatni belgilash (YTH, Travma)</span>
+                                <span class="text-[11px] text-slate-400 font-medium">Tezkor vizual holat (YTH, Hushsiz)</span>
                             </div>
                         </div>
                         <div class="w-8 h-8 rounded-full bg-slate-700 text-slate-300 flex items-center justify-center font-bold text-sm shrink-0">
@@ -100,8 +110,8 @@ const UI = {
 
                 </div>
 
-                <!-- Zamonaviy Suzuvchi Pastki Menyu (Floating Dark Bar) -->
-                <div class="w-full py-2.5 px-4 bg-slate-850/90 backdrop-blur-md rounded-3xl flex justify-around items-center shadow-2xl border border-slate-700/80 mt-auto">
+                <!-- Pastki Menyu -->
+                <div class="w-full py-2.5 px-4 bg-slate-850/90 backdrop-blur-md rounded-3xl flex justify-around items-center shadow-2xl border border-slate-700 mt-auto">
                     <button class="flex flex-col items-center text-red-500 font-bold text-[10px]">
                         <div class="w-8 h-8 rounded-xl bg-red-600/20 flex items-center justify-center text-base mb-0.5 border border-red-500/30">
                             🏠
@@ -146,7 +156,7 @@ const UI = {
                             <h4 class="font-extrabold text-white text-sm">Shifokor / Brigada Plansheti</h4>
                             <span class="bg-emerald-500/20 text-emerald-400 text-[9px] font-bold px-2 py-0.5 rounded-md">Jonli</span>
                         </div>
-                        <p class="text-xs text-slate-400 mt-0.5">Navigatsiya va SOS chaqiruvlarni qabul qilish</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Navigatsiya va chaqiruvlarni qabul qilish</p>
                     </div>
                 </button>
 
@@ -154,7 +164,7 @@ const UI = {
                     <div class="w-12 h-12 bg-indigo-600 text-white rounded-2xl flex items-center justify-center text-2xl shadow-md shrink-0">🧪</div>
                     <div>
                         <h4 class="font-extrabold text-white text-sm">Laboratoriya Tizimi</h4>
-                        <p class="text-xs text-slate-400 mt-0.5">Bemor JSHSHIR orqali yangi tahlillarni yuklash</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Yangi tahlillarni bazaga va kartaga yuklash</p>
                     </div>
                 </button>
 
@@ -162,7 +172,7 @@ const UI = {
                     <div class="w-12 h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-2xl shadow-md shrink-0">📋</div>
                     <div>
                         <h4 class="font-extrabold text-white text-sm">Chaqiruvlar Tarixi & Retseptlar</h4>
-                        <p class="text-xs text-slate-400 mt-0.5">Avvalgi barcha tez tibbiy xulosalar arxivi</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Barcha tibbiy xulosalar arxivi</p>
                     </div>
                 </button>
             </div>
@@ -292,4 +302,4 @@ const UI = {
         </div>
     `,
 
-   
+    //

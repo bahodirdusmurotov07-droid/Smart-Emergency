@@ -5,11 +5,11 @@ const DoctorPanel = {
     ambulanceLng: 69.2640,
 
     render: () => {
-        const labDataRaw = localStorage.getItem('se_lab_31201991234567');
-        const labData = labDataRaw ? JSON.parse(labDataRaw) : {
+        // Laboratoriya kiritgan oxirgi jonli tahlilni o'qib olish
+        const labData = typeof UI !== 'undefined' ? UI.getLabData() : {
             testType: "Koagulyatsiya (D-Dimer)",
             risk: "🔴 Yuqori xavf (Kritik)",
-            note: "Insult takrorlanish xavfi mavjud.",
+            note: "Insult takrorlanish xavfi mavjud, qon quyulgan.",
             date: "Bugun"
         };
 
@@ -19,7 +19,7 @@ const DoctorPanel = {
         return `
             <div class="flex flex-col justify-between h-full w-full p-4 bg-slate-950 text-white overflow-y-auto">
                 <div class="space-y-3">
-                    <!-- Yuqori panel -->
+                    <!-- Yuqori qism (Header) -->
                     <div class="flex justify-between items-center pb-2.5 border-b border-slate-800">
                         <div class="flex items-center space-x-2">
                             <div class="w-8 h-8 bg-red-600 rounded-xl flex items-center justify-center text-white text-sm shadow-md">
@@ -37,7 +37,7 @@ const DoctorPanel = {
 
                     <!-- Jonli Xarita va Marshrut -->
                     <div class="relative rounded-3xl overflow-hidden border border-slate-800 shadow-xl bg-slate-900">
-                        <div id="doctorMap" style="height: 190px; width: 100%;"></div>
+                        <div id="doctorMap" style="height: 180px; width: 100%;"></div>
                         
                         <!-- Marshrut haqida tezkor bildirishnoma -->
                         <div class="absolute top-2 left-2 right-2 bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-700/60 flex justify-between items-center text-[11px] z-[500]">
@@ -69,17 +69,18 @@ const DoctorPanel = {
                         <!-- Taqiqlangan dori va tashxis -->
                         <div class="bg-red-950/50 border border-red-800/60 p-2.5 rounded-xl text-[11px] text-red-200">
                             <p class="font-bold text-red-400">🔴 TIBBIY OGOHLANTIRISH:</p>
-                            <p class="mt-0.5">• 2025: Ishemik Insult tarixi</p>
-                            <p class="font-bold text-amber-300">• Taqiqlangan: Penitsillin (Kuchli allergiya)</p>
+                            <p class="mt-0.5">• 2025: Ishemik Insult tarixi (Kritik guruh)</p>
+                            <p class="font-bold text-amber-300">• Taqiqlangan dori: Penitsillin (Kuchli allergiya)</p>
                         </div>
 
-                        <!-- Laboratoriya xulosasi -->
-                        <div class="bg-slate-950/70 border border-slate-800 p-2.5 rounded-xl text-[11px] flex justify-between items-center">
-                            <div>
-                                <span class="text-slate-400 font-bold">🧪 ${labData.testType}:</span>
-                                <p class="text-slate-300 text-[10px]">${labData.note}</p>
+                        <!-- Laboratoriya Tahlili Natijasi (Sinxronlangan) -->
+                        <div class="bg-slate-950/70 border border-slate-800 p-2.5 rounded-xl text-[11px] space-y-1">
+                            <div class="flex justify-between items-center">
+                                <span class="text-indigo-300 font-bold">🧪 ${labData.testType}:</span>
+                                <span class="text-amber-400 font-bold text-[10px]">${labData.risk}</span>
                             </div>
-                            <span class="text-amber-400 font-bold text-[10px] shrink-0">${labData.risk}</span>
+                            <p class="text-slate-300 text-[10px] leading-relaxed"><b>Xulosa:</b> ${labData.note}</p>
+                            <p class="text-slate-500 text-[9px] text-right">Sana: ${labData.date || 'Bugun'}</p>
                         </div>
                     </div>
                 </div>
@@ -97,7 +98,7 @@ const DoctorPanel = {
         `;
     },
 
-    // Xaritani yuklash va navigatsiya marshrutini chizish
+    // Xaritani yuklash va marshrutni chizish
     initMap: () => {
         setTimeout(() => {
             try {
@@ -110,15 +111,15 @@ const DoctorPanel = {
                     attribution: '© OpenStreetMap'
                 }).addTo(map);
 
-                // Tez yordam mashinasi markeri
+                // Brigada markeri
                 const ambulanceMarker = L.marker([DoctorPanel.ambulanceLat, DoctorPanel.ambulanceLng]).addTo(map)
                     .bindPopup("🚑 14-Brigada (Siz)").openPopup();
 
-                // Bemor manzili markeri
-                const patientMarker = L.marker([DoctorPanel.patientLat, DoctorPanel.patientLng]).addTo(map)
+                // Bemor markeri
+                L.marker([DoctorPanel.patientLat, DoctorPanel.patientLng]).addTo(map)
                     .bindPopup("🚨 Bemor manzili (SOS)");
 
-                // Yo'l marshruti chizig'i (Navigatsiya Polyline)
+                // Yo'l marshruti chizig'i
                 const routeCoordinates = [
                     [DoctorPanel.ambulanceLat, DoctorPanel.ambulanceLng],
                     [41.3050, 69.2680],
@@ -136,7 +137,7 @@ const DoctorPanel = {
 
                 map.fitBounds(routeLine.getBounds(), { padding: [25, 25] });
 
-                // Jonli harakatlanish simulyatsiyasi
+                // Avtomobil harakati simulyatsiyasi
                 let currentLat = DoctorPanel.ambulanceLat;
                 let currentLng = DoctorPanel.ambulanceLng;
                 setInterval(() => {
@@ -146,7 +147,7 @@ const DoctorPanel = {
                 }, 2500);
 
             } catch (e) {
-                console.log("Shifokor xaritasi yuklanmadi:", e);
+                console.log("Shifokor xaritasi xatoligi:", e);
             }
         }, 300);
     }
